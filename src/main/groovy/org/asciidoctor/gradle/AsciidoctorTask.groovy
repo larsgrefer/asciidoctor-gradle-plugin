@@ -646,8 +646,7 @@ class AsciidoctorTask extends DefaultTask {
         [DEFAULT_BACKEND]
     }
 
-    @SuppressWarnings('CatchException')
-    @SuppressWarnings('DuplicateStringLiteral')
+    @SuppressWarnings(['DuplicateStringLiteral', 'CatchException'])
     protected void processDocumentsAndResources(final String backend) {
         try {
             resourceCopyProxy.copy(outputBackendDir(outputDir, backend), resourceCopySpec)

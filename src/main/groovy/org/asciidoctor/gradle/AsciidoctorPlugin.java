@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.asciidoctor.gradle
+package org.asciidoctor.gradle;
 
-import org.gradle.api.Action
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ResolvableDependencies
-import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.Plugin;
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.artifacts.DependencySet;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
 
 /**
  * @author Noam Tenne
@@ -29,44 +28,39 @@ import org.gradle.api.artifacts.dsl.DependencyHandler
  * @author Markus Schlichting
  * @author Schalk W. Cronjé
  */
-class AsciidoctorPlugin implements Plugin<Project> {
-    static final String ASCIIDOCTOR = 'asciidoctor'
-    static final String ASCIIDOCTORJ = 'asciidoctorj'
-    static final String ASCIIDOCTORJ_CORE_DEPENDENCY = 'org.asciidoctor:asciidoctorj:'
-    static final String ASCIIDOCTORJ_GROOVY_DSL_DEPENDENCY = 'org.asciidoctor:asciidoctorj-groovy-dsl:'
+public class AsciidoctorPlugin implements Plugin<Project> {
+    static final String ASCIIDOCTOR = "asciidoctor";
+    static final String ASCIIDOCTORJ = "asciidoctorj";
+    static final String ASCIIDOCTORJ_CORE_DEPENDENCY = "org.asciidoctor:asciidoctorj:";
+    static final String ASCIIDOCTORJ_GROOVY_DSL_DEPENDENCY = "org.asciidoctor:asciidoctorj-groovy-dsl:";
 
-    void apply(Project project) {
-        project.apply(plugin: 'base')
+    public void apply(Project project) {
+        project.getPlugins().apply("base");
 
-        AsciidoctorExtension extension = project.extensions.create(ASCIIDOCTORJ, AsciidoctorExtension, project)
+        AsciidoctorExtension extension = project.getExtensions().create(ASCIIDOCTORJ, AsciidoctorExtension.class, project);
 
-        project.afterEvaluate {
-            if(!project.extensions.asciidoctorj.noDefaultRepositories) {
-                project.repositories {
-                    jcenter()
-                }
+        project.afterEvaluate(p -> {
+            if(!extension.isNoDefaultRepositories()) {
+                project.getRepositories().jcenter();
             }
-        }
+        });
 
-        Configuration configuration = project.configurations.maybeCreate(ASCIIDOCTOR)
-        project.logger.info("[Asciidoctor] asciidoctorj: ${extension.version}")
-        project.logger.info("[Asciidoctor] asciidoctorj-groovy-dsl: ${extension.groovyDslVersion}")
+        Configuration configuration = project.getConfigurations().maybeCreate(ASCIIDOCTOR);
+        project.getLogger().info("[Asciidoctor] asciidoctorj: {}", extension.getVersion());
+        project.getLogger().info("[Asciidoctor] asciidoctorj-groovy-dsl: {}", extension.getGroovyDslVersion());
 
-        configuration.incoming.beforeResolve(new Action<ResolvableDependencies>() {
-            @SuppressWarnings('UnusedMethodParameter')
-            void execute(ResolvableDependencies resolvableDependencies) {
-                DependencyHandler dependencyHandler = project.dependencies
-                def dependencies = configuration.dependencies
-                dependencies.add(dependencyHandler.create(ASCIIDOCTORJ_CORE_DEPENDENCY + extension.version))
-                dependencies.add(dependencyHandler.create(ASCIIDOCTORJ_GROOVY_DSL_DEPENDENCY + extension.groovyDslVersion))
-            }
-        })
 
-        project.task(ASCIIDOCTOR,
-                type: AsciidoctorTask,
-                group: 'Documentation',
-                description: 'Converts AsciiDoc files and copies the output files and related resources to the build directory.') {
-            classpath = configuration
-        }
+        configuration.getIncoming().beforeResolve(resolvableDependencies -> {
+            DependencyHandler dependencyHandler = project.getDependencies();
+            DependencySet dependencies = configuration.getDependencies();
+            dependencies.add(dependencyHandler.create(ASCIIDOCTORJ_CORE_DEPENDENCY + extension.getVersion()));
+            dependencies.add(dependencyHandler.create(ASCIIDOCTORJ_GROOVY_DSL_DEPENDENCY + extension.getGroovyDslVersion()));
+        });
+
+        project.getTasks().create(ASCIIDOCTOR, AsciidoctorTask.class, task -> {
+            task.setGroup("Documentation");
+            task.setDescription("Converts AsciiDoc files and copies the output files and related resources to the build directory.");
+            task.setClasspath(configuration);
+        });
     }
 }

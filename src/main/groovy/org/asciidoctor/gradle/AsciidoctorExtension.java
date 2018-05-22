@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.asciidoctor.gradle
+package org.asciidoctor.gradle;
 
-import org.gradle.api.Project
+import org.gradle.api.Project;
 
 /**
  * @author Andres Almiray
  */
-class AsciidoctorExtension {
-    String version = '1.5.6'
+public class AsciidoctorExtension {
+    private String version = "1.5.6";
 
-    String groovyDslVersion = '1.0.0.Alpha2'
+    private String groovyDslVersion = "1.0.0.Alpha2";
 
     /**
      * By default the plugin will try to add a default repository to find AsciidoctorJ.
@@ -32,11 +32,39 @@ class AsciidoctorExtension {
      *
      * @since 1.5.3
      */
-    boolean noDefaultRepositories = false
+    private boolean noDefaultRepositories = false;
 
-    final Project project
+    private final Project project;
 
     AsciidoctorExtension(Project project) {
-        this.project = project
+        this.project = project;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getGroovyDslVersion() {
+        return groovyDslVersion;
+    }
+
+    public void setGroovyDslVersion(String groovyDslVersion) {
+        this.groovyDslVersion = groovyDslVersion;
+    }
+
+    public boolean isNoDefaultRepositories() {
+        return noDefaultRepositories;
+    }
+
+    public void setNoDefaultRepositories(boolean noDefaultRepositories) {
+        this.noDefaultRepositories = noDefaultRepositories;
+    }
+
+    public Project getProject() {
+        return project;
     }
 }
