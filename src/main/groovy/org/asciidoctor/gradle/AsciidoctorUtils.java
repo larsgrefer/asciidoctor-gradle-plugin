@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.asciidoctor.gradle
+package org.asciidoctor.gradle;
 
-import java.util.regex.Pattern
+import java.io.File;
+import java.io.IOException;
+import java.util.regex.Pattern;
 
-class AsciidoctorUtils {
+public class AsciidoctorUtils {
 
     /**
      * Based on
@@ -30,35 +32,35 @@ class AsciidoctorUtils {
      * @return target's path relative to the base directory
      * @throws IOException if an error occurs while resolving the files' canonical names
      */
-    static String getRelativePath(File target, File base) throws IOException {
-        String[] baseComponents = base.canonicalPath.split(Pattern.quote(File.separator))
-        String[] targetComponents = target.canonicalPath.split(Pattern.quote(File.separator))
+    public static String getRelativePath(File target, File base) throws IOException {
+        String[] baseComponents = base.getCanonicalPath().split(Pattern.quote(File.separator));
+        String[] targetComponents = target.getCanonicalPath().split(Pattern.quote(File.separator));
 
         // skip common components
-        int index = 0
+        int index = 0;
         for (; index < targetComponents.length && index < baseComponents.length; ++index) {
             if (!targetComponents[index].equals(baseComponents[index])) {
-                break
+                break;
             }
         }
 
-        StringBuilder result = new StringBuilder()
+        StringBuilder result = new StringBuilder();
         if (index != baseComponents.length) {
             // backtrack to base directory
             for (int i = index; i < baseComponents.length; ++i) {
                 if (i != index) {
-                    result.append(File.separator)
+                    result.append(File.separator);
                 }
-                result.append('..')
+                result.append("..");
             }
         }
         for (int i = index; i < targetComponents.length; ++i) {
             if (i != index) {
-                result.append(File.separator)
+                result.append(File.separator);
             }
-            result.append(targetComponents[i])
+            result.append(targetComponents[i]);
         }
 
-        result.toString()
+        return result.toString();
     }
 }
