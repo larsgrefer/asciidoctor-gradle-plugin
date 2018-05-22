@@ -13,25 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.asciidoctor.gradle
+package org.asciidoctor.gradle;
 
-import org.gradle.api.Project
-import org.gradle.api.file.CopySpec
-import org.gradle.api.tasks.WorkResult
+import org.gradle.api.Project;
+import org.gradle.api.file.CopySpec;
+import org.gradle.api.tasks.WorkResult;
+
+import java.io.File;
 
 /**
  * @author Schalk W. Cronjé.
  */
-class ResourceCopyProxyImpl implements ResourceCopyProxy {
-    Project project
+public class ResourceCopyProxyImpl implements ResourceCopyProxy {
 
-    ResourceCopyProxyImpl(Project p) { project = p }
+    private Project project;
+
+    public ResourceCopyProxyImpl(Project p) {
+        project = p;
+    }
 
     @Override
-    WorkResult copy(File outputDir, CopySpec spec) {
-        project.copy {
-            into outputDir
-            with spec
-        }
+    public WorkResult copy(final File outputDir, final CopySpec spec) {
+        return project.copy(copySpec -> {
+            copySpec.into(outputDir);
+            copySpec.with(spec);
+        });
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
     }
 }

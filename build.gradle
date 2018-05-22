@@ -96,6 +96,10 @@ dependencies {
     intTestRuntime files(createClasspathManifest)
 }
 
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
 compileGroovy {
     sourceCompatibility = project.sourceCompatibility
     targetCompatibility = project.targetCompatibility
